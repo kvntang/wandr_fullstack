@@ -54,8 +54,6 @@ onMounted(async () => {
   <p class="author">{{ props.post.author }}</p>
   <p>{{ props.post.content }}</p>
 
-  <!-- Display the image if it exists -->
-
   <!-- Lazy load the image -->
   <div v-if="imageSrc">
     <img :src="imageSrc" alt="Uploaded Image" loading="lazy" style="max-width: 500px" />
