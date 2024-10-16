@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, onMounted } from "vue";
 import { useUserStore } from "@/stores/user";
 import { formatDate } from "@/utils/formatDate";
 import { storeToRefs } from "pinia";
@@ -16,16 +17,57 @@ const deletePost = async () => {
   }
   emit("refreshPosts");
 };
+
+// Compute the image source from the base64 string
+const imageSrc = ref<string | null>(null);
+// Function to handle the base64 image creation
+async function createImageFromBase64(base64ImageData: string): Promise<string | null> {
+  if (!base64ImageData) return null;
+
+  if (!base64ImageData.startsWith("data:image")) {
+    base64ImageData = `data:image/jpeg;base64,${base64ImageData}`;
+  }
+
+  const img = new Image();
+  img.src = base64ImageData;
+
+  await new Promise<void>((resolve, reject) => {
+    img.onload = () => resolve();
+    img.onerror = (error) => reject(error);
+  });
+
+  return base64ImageData;
+}
+
+onMounted(async () => {
+  if (props.post.photo) {
+    try {
+      imageSrc.value = await createImageFromBase64(props.post.photo);
+    } catch (error) {
+      console.error("Error setting image source:", error);
+    }
+  }
+});
 </script>
 
 <template>
   <p class="author">{{ props.post.author }}</p>
   <p>{{ props.post.content }}</p>
+
+  <!-- Display the image if it exists -->
+
+  <!-- Lazy load the image -->
+  <div v-if="imageSrc">
+    <img :src="imageSrc" alt="Uploaded Image" loading="lazy" style="max-width: 500px" />
+  </div>
+  <p v-else>No photo available.</p>
+
   <div class="base">
     <menu v-if="props.post.author == currentUsername">
       <li><button class="btn-small pure-button" @click="emit('editPost', props.post._id)">Edit</button></li>
       <li><button class="button-error btn-small pure-button" @click="deletePost">Delete</button></li>
     </menu>
+
     <article class="timestamp">
       <p v-if="props.post.dateCreated !== props.post.dateUpdated">Edited on: {{ formatDate(props.post.dateUpdated) }}</p>
       <p v-else>Created on: {{ formatDate(props.post.dateCreated) }}</p>
