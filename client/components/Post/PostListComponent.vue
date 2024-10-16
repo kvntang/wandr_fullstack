@@ -78,6 +78,8 @@ article {
   flex-direction: column;
   gap: 0.5em;
   padding: 1em;
+  width: 40em; /* Set a fixed narrower width */
+  margin: 1em auto; /* Center the article and add spacing between articles */
 }
 
 .posts {
