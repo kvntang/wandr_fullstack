@@ -56,7 +56,7 @@ onMounted(async () => {
 
   <!-- Lazy load the image -->
   <div v-if="imageSrc">
-    <img :src="imageSrc" alt="Uploaded Image" loading="lazy" style="max-width: 500px" />
+    <img :src="imageSrc" alt="Uploaded Image" loading="lazy" class="responsive-image" />
   </div>
   <p v-else>No photo available.</p>
 
@@ -74,6 +74,14 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.responsive-image {
+  display: block; /* Ensure the image is treated as a block-level element */
+  margin: 0 auto; /* Center the image horizontally */
+  width: 100%; /* Make the image responsive to the container width */
+  height: auto; /* Maintain aspect ratio */
+  max-width: 500px; /* Do not grow larger than 500px */
+}
+
 p {
   margin: 0em;
 }
