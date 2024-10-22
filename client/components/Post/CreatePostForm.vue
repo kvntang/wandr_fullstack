@@ -91,7 +91,7 @@ form {
   flex-direction: column;
   gap: 0.5em;
   padding: 1em; */
-  background-color: var(--base-bg);
+  background-color: #eeeeee;
   border-radius: 1em;
   display: flex;
   flex-direction: column;

@@ -60,6 +60,13 @@ onMounted(async () => {
   </div>
   <p v-else>No photo available.</p>
 
+  <!-- Commenting -->
+  <div>
+    <p>Display comments here</p>
+    <div class="commentbox">Add a comment here</div>
+  </div>
+
+  <!-- Edit and TimeStamp -->
   <div class="base">
     <menu v-if="props.post.author == currentUsername">
       <li><button class="btn-small pure-button" @click="emit('editPost', props.post._id)">Edit</button></li>
@@ -100,6 +107,13 @@ menu {
   gap: 1em;
   padding: 0;
   margin: 0;
+}
+
+.commentbox {
+  background-color: #d7dfe1;
+  padding: 0.5em;
+  color: #eeeeee;
+  border-radius: 8px;
 }
 
 .timestamp {
