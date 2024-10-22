@@ -60,7 +60,6 @@ onBeforeMount(async () => {
 
 nav {
   padding: 1em 2em;
-  background-color: #eeeeee;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -91,6 +90,7 @@ nav {
 h1 {
   font-size: 2em;
   margin: 0;
+  color: #eeeeee;
 }
 
 img {

@@ -29,7 +29,7 @@ const calculateStyle = (relativeIndex: number) => {
 };
 
 // Placeholder items array (first one is the post, others are empty)
-const carouselItems = computed(() => {
+const feedItems = computed(() => {
   return [props.post, ...Array(props.totalItems - 1).fill(null)];
 });
 
@@ -51,7 +51,7 @@ const editPost = (id: string) => emit("editPost", id);
   <div class="carousel-container">
     <div class="relative carousel-wrapper">
       <!-- Loop through visible posts and placeholders -->
-      <article v-for="(item, index) in carouselItems" :key="index" class="carousel-card" :style="calculateStyle(index - centerIndex)">
+      <article v-for="(item, index) in feedItems" :key="index" class="carousel-card" :style="calculateStyle(index - centerIndex)">
         <div v-if="index === 0">
           <!-- Show the actual post on the first card -->
           <PostComponent :post="item" @refreshPosts="refreshPosts" @editPost="editPost" />
@@ -85,7 +85,7 @@ const editPost = (id: string) => emit("editPost", id);
 .carousel-wrapper {
   position: relative;
   width: 100%;
-  height: 300px;
+  height: 450px;
   overflow: hidden;
 }
 
@@ -94,8 +94,11 @@ const editPost = (id: string) => emit("editPost", id);
   top: 0;
   left: 50%;
   transform-origin: center;
+  background-color: #eeeeee;
+  border-radius: 30px;
   width: 300px;
-  height: 300px;
+  height: 400px;
+  padding: 1em;
 }
 
 .placeholder-card {
@@ -104,10 +107,10 @@ const editPost = (id: string) => emit("editPost", id);
   align-items: center;
   width: 100%;
   height: 300px;
-  background-color: #f0f0f0;
+  background-color: #d2d2d2;
   color: #888;
   font-size: 1.2em;
-  border-radius: 8px;
+  border-radius: 30px;
 }
 
 .carousel-nav {

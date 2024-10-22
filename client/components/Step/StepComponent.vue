@@ -13,8 +13,11 @@ const stepSize = ref(5);
 </template>
 
 <style scoped>
+h2 {
+  color: #eeeeee;
+}
+
 .slider-container {
-  background-color: #eeeeee;
   border-radius: 1em;
   padding: 0em;
   width: 90%;

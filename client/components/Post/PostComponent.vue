@@ -75,11 +75,13 @@ onMounted(async () => {
 
 <style scoped>
 .responsive-image {
-  display: block; /* Ensure the image is treated as a block-level element */
-  margin: 0 auto; /* Center the image horizontally */
-  width: 100%; /* Make the image responsive to the container width */
-  height: auto; /* Maintain aspect ratio */
-  max-width: 500px; /* Do not grow larger than 500px */
+  display: block;
+  margin: 0 auto;
+  width: 100%; /* Ensure it takes up full width of the container */
+  max-width: 500px; /* Set maximum width */
+  height: 300px; /* Set a fixed height for all images */
+  object-fit: cover; /* Crop the image to fit within the container */
+  border-radius: 8px; /* Optional: Add rounded corners */
 }
 
 p {
