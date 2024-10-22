@@ -4,6 +4,7 @@ import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { computed, onBeforeMount } from "vue";
 import { RouterLink, RouterView, useRoute } from "vue-router";
+import StepComponent from "@/components/Step/StepComponent.vue";
 
 const currentRoute = useRoute();
 const currentRouteName = computed(() => currentRoute.name);
@@ -24,13 +25,18 @@ onBeforeMount(async () => {
 <template>
   <header>
     <nav>
-      <div class="title">
+      <div class="left-section">
+        <StepComponent />
+      </div>
+
+      <div class="center-section">
         <img src="@/assets/images/logo.svg" />
         <RouterLink :to="{ name: 'Home' }">
           <h1>Wandr</h1>
         </RouterLink>
       </div>
-      <ul>
+
+      <ul class="right-section">
         <li>
           <RouterLink :to="{ name: 'Home' }" :class="{ underline: currentRouteName == 'Home' }"> Home </RouterLink>
         </li>
@@ -54,20 +60,37 @@ onBeforeMount(async () => {
 
 nav {
   padding: 1em 2em;
-  background-color: rgb(255, 104, 58);
+  background-color: #eeeeee;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+}
+
+.left-section {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.center-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  list-style-type: none;
+  gap: 1em;
+  flex: 1;
 }
 
 h1 {
   font-size: 2em;
   margin: 0;
-}
-
-.title {
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
 }
 
 img {
@@ -78,15 +101,6 @@ a {
   font-size: large;
   color: black;
   text-decoration: none;
-}
-
-ul {
-  list-style-type: none;
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  gap: 1em;
 }
 
 .underline {

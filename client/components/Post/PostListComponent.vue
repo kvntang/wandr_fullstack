@@ -1,12 +1,11 @@
 <script setup lang="ts">
+import { ref, onBeforeMount } from "vue";
 import CreatePostForm from "@/components/Post/CreatePostForm.vue";
-import EditPostForm from "@/components/Post/EditPostForm.vue";
-import PostComponent from "@/components/Post/PostComponent.vue";
-import { useUserStore } from "@/stores/user";
-import { fetchy } from "@/utils/fetchy";
-import { storeToRefs } from "pinia";
-import { onBeforeMount, ref } from "vue";
 import SearchPostForm from "./SearchPostForm.vue";
+import CarouselComponent from "@/components/Post/CarouselComponent.vue";
+import { useUserStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+import { fetchy } from "@/utils/fetchy";
 
 const { isLoggedIn } = storeToRefs(useUserStore());
 
@@ -47,12 +46,15 @@ onBeforeMount(async () => {
     <h2 v-else>Posts by {{ searchAuthor }}:</h2>
     <SearchPostForm @getPostsByAuthor="getPosts" />
   </div>
+
+  <!-- Load a carousel for each post, first card is the post, rest are placeholders -->
   <section class="posts" v-if="loaded && posts.length !== 0">
-    <article v-for="post in posts" :key="post._id">
-      <PostComponent v-if="editing !== post._id" :post="post" @refreshPosts="getPosts" @editPost="updateEditing" />
-      <EditPostForm v-else :post="post" @refreshPosts="getPosts" @editPost="updateEditing" />
-    </article>
+    <div v-for="post in posts" :key="post._id">
+      <!-- Pass an offset prop to control the scaling and translation -->
+      <CarouselComponent :post="post" :totalItems="5" :offset="300" @refreshPosts="getPosts" @editPost="updateEditing" />
+    </div>
   </section>
+
   <p v-else-if="loaded">No posts found</p>
   <p v-else>Loading...</p>
 </template>
@@ -72,7 +74,7 @@ p,
 }
 
 article {
-  background-color: var(--base-bg);
+  background-color: #eeeeee;
   border-radius: 1em;
   display: flex;
   flex-direction: column;

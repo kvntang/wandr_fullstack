@@ -85,12 +85,21 @@ const handleFileChange = (event: Event) => {
 
 <style scoped>
 form {
+  /* background-color: var(--base-bg);
+  border-radius: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  padding: 1em; */
   background-color: var(--base-bg);
   border-radius: 1em;
   display: flex;
   flex-direction: column;
   gap: 0.5em;
   padding: 1em;
+  width: 90%; /* Set a responsive width */
+  max-width: 40em; /* Ensure it doesn’t grow too large on wide screens */
+  margin: 1em auto; /* Center the article and add spacing between articles */
 }
 
 textarea {
