@@ -35,7 +35,7 @@ html, body {
   height: 100%;
   margin: 0;
   /* Define the gradient */
-  background: linear-gradient(to bottom, #70858D, #729CAD); /* Adjust colors as needed */
+  background: linear-gradient(to bottom, #d7dfe1,  #cfd4d6); /* Adjust colors as needed */
   background-size: cover; /* Ensure the gradient covers the entire page */
   background-attachment: fixed; /* Fix the background */
 }

@@ -1,52 +1,3 @@
-<script setup lang="ts">
-import { ref, computed } from "vue";
-import PostComponent from "@/components/Post/PostComponent.vue";
-
-// Props
-const props = defineProps({
-  post: Object, // The first post to display
-  totalItems: { type: Number, default: 5 }, // Total number of items (1 post + 4 placeholders)
-  offset: { type: Number, default: 50 }, // Offset value for scaling/spacing (control passed from parent)
-});
-const emit = defineEmits(["refreshPosts", "editPost"]);
-
-// Local state
-const centerIndex = ref(0);
-
-// Calculate the style for each card in the carousel
-const calculateStyle = (relativeIndex: number) => {
-  const absIndex = Math.abs(relativeIndex);
-  const scale = 1 - (absIndex * props.offset) / 1000;
-  const translateX = relativeIndex * (props.offset / 1.5) * Math.pow(1.2, absIndex);
-  const zIndex = 5 - absIndex;
-
-  return {
-    transform: `scale(${scale}) translate(${translateX}px)`,
-    zIndex,
-    opacity: absIndex > 2 ? 0 : 1,
-    transition: "all 0.3s ease-in-out",
-  };
-};
-
-// Placeholder items array (first one is the post, others are empty)
-const feedItems = computed(() => {
-  return [props.post, ...Array(props.totalItems - 1).fill(null)];
-});
-
-// Navigate left or right in the carousel
-const navigate = (direction: "left" | "right") => {
-  if (direction === "left" && centerIndex.value > 0) {
-    centerIndex.value--;
-  } else if (direction === "right" && centerIndex.value < props.totalItems - 1) {
-    centerIndex.value++;
-  }
-};
-
-// Emit events to refresh or edit posts
-const refreshPosts = () => emit("refreshPosts");
-const editPost = (id: string) => emit("editPost", id);
-</script>
-
 <template>
   <div class="carousel-container">
     <div class="relative carousel-wrapper">
@@ -73,6 +24,55 @@ const editPost = (id: string) => emit("editPost", id);
   </div>
 </template>
 
+<script setup lang="ts">
+import { ref, computed } from "vue";
+import PostComponent from "@/components/Post/PostComponent.vue";
+
+// Props
+const props = defineProps({
+  post: Object, // The first post to display
+  totalItems: { type: Number, default: 5 }, // Total number of items (1 post + 4 placeholders)
+  offset: { type: Number, default: 50 }, // Offset value for scaling/spacing (control passed from parent)
+});
+const emit = defineEmits(["refreshPosts", "editPost"]);
+
+// Local state
+const centerIndex = ref(0);
+
+// Calculate the style for each card in the carousel
+const calculateStyle = (relativeIndex: number) => {
+  const absIndex = Math.abs(relativeIndex);
+  const scale = 1 - (absIndex * props.offset) / 1000;
+  const translateX = relativeIndex * (props.offset / 1.5) * Math.pow(1.2, absIndex);
+  const zIndex = 5 - absIndex;
+
+  return {
+    transform: `translateX(-50%) scale(${scale}) translate(${translateX}px)`, // Add translateX(-50%) to center the card
+    zIndex,
+    opacity: absIndex > 2 ? 0 : 1,
+    transition: "all 0.3s ease-in-out",
+  };
+};
+
+// Placeholder items array (first one is the post, others are empty)
+const feedItems = computed(() => {
+  return [props.post, ...Array(props.totalItems - 1).fill(null)];
+});
+
+// Navigate left or right in the carousel
+const navigate = (direction: "left" | "right") => {
+  if (direction === "left" && centerIndex.value > 0) {
+    centerIndex.value--;
+  } else if (direction === "right" && centerIndex.value < props.totalItems - 1) {
+    centerIndex.value++;
+  }
+};
+
+// Emit events to refresh or edit posts
+const refreshPosts = () => emit("refreshPosts");
+const editPost = (id: string) => emit("editPost", id);
+</script>
+
 <style scoped>
 .carousel-container {
   display: flex;
@@ -92,13 +92,14 @@ const editPost = (id: string) => emit("editPost", id);
 .carousel-card {
   position: absolute;
   top: 0;
-  left: 50%;
+  left: 50%; /* Set the left position to 50% */
   transform-origin: center;
   background-color: #eeeeee;
   border-radius: 30px;
   width: 300px;
   height: 400px;
   padding: 1em;
+  transform: translateX(-50%); /* Adjust position to center card by moving half of its width */
 }
 
 .placeholder-card {

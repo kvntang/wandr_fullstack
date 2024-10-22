@@ -30,9 +30,8 @@ onBeforeMount(async () => {
       </div>
 
       <div class="center-section">
-        <img src="@/assets/images/logo.svg" />
         <RouterLink :to="{ name: 'Home' }">
-          <h1>Wandr</h1>
+          <h1>Wandr.</h1>
         </RouterLink>
       </div>
 
@@ -90,7 +89,7 @@ nav {
 h1 {
   font-size: 2em;
   margin: 0;
-  color: #eeeeee;
+  color: #4e657d;
 }
 
 img {
