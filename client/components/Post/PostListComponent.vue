@@ -1,13 +1,7 @@
 <script setup lang="ts">
 import { ref, onBeforeMount } from "vue";
-import CreatePostForm from "@/components/Post/CreatePostForm.vue";
-import SearchPostForm from "./SearchPostForm.vue";
 import CarouselComponent from "@/components/Post/CarouselComponent.vue";
-import { useUserStore } from "@/stores/user";
-import { storeToRefs } from "pinia";
 import { fetchy } from "@/utils/fetchy";
-
-const { isLoggedIn } = storeToRefs(useUserStore());
 
 const loaded = ref(false);
 let posts = ref<Array<Record<string, string>>>([]);
@@ -37,14 +31,9 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <section v-if="isLoggedIn">
-    <h2>Create a post:</h2>
-    <CreatePostForm @refreshPosts="getPosts" />
-  </section>
   <div class="row">
     <h2 v-if="!searchAuthor">Feed:</h2>
     <h2 v-else>Posts by {{ searchAuthor }}:</h2>
-    <SearchPostForm @getPostsByAuthor="getPosts" />
   </div>
 
   <!-- Load a carousel for each post, first card is the post, rest are placeholders -->

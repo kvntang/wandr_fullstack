@@ -26,7 +26,8 @@ onBeforeMount(async () => {
   <header>
     <nav>
       <div class="left-section">
-        <StepComponent />
+        <!-- Only show StepComponent when the user is logged in -->
+        <StepComponent v-if="isLoggedIn" />
       </div>
 
       <div class="center-section">
@@ -39,6 +40,12 @@ onBeforeMount(async () => {
         <li>
           <RouterLink :to="{ name: 'Home' }" :class="{ underline: currentRouteName == 'Home' }"> Home </RouterLink>
         </li>
+        <li>
+          <RouterLink :to="{ name: 'Search' }" :class="{ underline: currentRouteName == 'Search' }"> Search </RouterLink>
+        </li>
+        <li>
+          <RouterLink :to="{ name: 'Create' }" :class="{ underline: currentRouteName == 'Create' }"> Create </RouterLink>
+        </li>
         <li v-if="isLoggedIn">
           <RouterLink :to="{ name: 'Settings' }" :class="{ underline: currentRouteName == 'Settings' }"> Settings </RouterLink>
         </li>
@@ -47,6 +54,7 @@ onBeforeMount(async () => {
         </li>
       </ul>
     </nav>
+
     <article v-if="toast !== null" class="toast" :class="toast.style">
       <p>{{ toast.message }}</p>
     </article>

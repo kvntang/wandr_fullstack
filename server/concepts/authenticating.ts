@@ -119,7 +119,7 @@ export default class AuthenticatingConcept {
   // New method to update stepSize
   async updateStepSize(_id: ObjectId, stepSize: string) {
     await this.users.partialUpdateOne({ _id }, { stepSize });
-    return { msg: "Step size updated successfully!", stepSize };
+    return { msg: `Step size updated to ${stepSize} successfully!`, stepSize };
   }
 
   // Helper method to validate stepSize

@@ -48,6 +48,10 @@ export const useUserStore = defineStore(
       await fetchy("/api/users/password", "PATCH", { body: { currentPassword, newPassword } });
     };
 
+    const updateUserStep = async (stepSize: string) => {
+      await fetchy("/api/users/step", "PATCH", { body: { stepSize } });
+    };
+
     const deleteUser = async () => {
       await fetchy("/api/users", "DELETE");
       resetStore();
@@ -63,6 +67,7 @@ export const useUserStore = defineStore(
       updateUserUsername,
       updateUserPassword,
       deleteUser,
+      updateUserStep,
     };
   },
   { persist: true },

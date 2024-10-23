@@ -1,14 +1,23 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useUserStore } from "@/stores/user";
 
 // Create a ref for the step size, initialized to a default value (e.g., 5)
 const stepSize = ref(5);
+
+const { updateUserStep, updateSession } = useUserStore();
+
+async function updateStep() {
+  // Convert stepSize to a string before passing it to the store function
+  await updateUserStep(String(stepSize.value));
+  await updateSession();
+}
 </script>
 
 <template>
   <div class="slider-container">
-    <h2>My Step Size: {{ stepSize }}</h2>
-    <input id="step-slider" type="range" min="1" max="10" v-model="stepSize" />
+    <!-- Trigger updateStep on slider change -->
+    <input id="step-slider" type="range" min="1" max="10" v-model="stepSize" @input="updateStep" />
   </div>
 </template>
 
