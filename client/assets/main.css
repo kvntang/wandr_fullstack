@@ -34,8 +34,9 @@ a.button {
 html, body {
   height: 100%;
   margin: 0;
-  /* Define the gradient */
-  background: linear-gradient(to bottom, #aac0c9, #d7dfe1 ); /* Adjust colors as needed */
+  /* Use CSS variables to define the gradient colors */
+  background: linear-gradient(to bottom, var(--gradient-start, #aac0c9), var(--gradient-end, #d7dfe1)); /* Fallback colors */
   background-size: cover; /* Ensure the gradient covers the entire page */
   background-attachment: fixed; /* Fix the background */
+  transition: background 0.5s ease; /* Smooth transition effect */
 }

@@ -1,18 +1,44 @@
 <script setup lang="ts">
 import { useToastStore } from "@/stores/toast";
 import { useUserStore } from "@/stores/user";
+import { watch, computed, onBeforeMount } from "vue";
 import { storeToRefs } from "pinia";
-import { computed, onBeforeMount } from "vue";
 import { RouterLink, RouterView, useRoute } from "vue-router";
 import StepComponent from "@/components/Step/StepComponent.vue";
 
+// Get the current route for highlighting navigation
 const currentRoute = useRoute();
 const currentRouteName = computed(() => currentRoute.name);
+
+// Access user data and toast store
 const userStore = useUserStore();
-const { isLoggedIn } = storeToRefs(userStore);
+const { isLoggedIn, currentUserStep } = storeToRefs(userStore);
 const { toast } = storeToRefs(useToastStore());
 
-// Make sure to update the session before mounting the app in case the user is already logged in
+// Function to compute gradient colors based on user step size (lightness decreases with step size)
+const gradientStart = computed(() => {
+  const stepSize = Number(currentUserStep.value);
+  // Map stepSize to lightness values (90% is bright, 30% is dark)
+  const lightness = 90 - (stepSize / 10) * 60; // 90% to 30% lightness range
+  return `hsl(200, 30%, ${lightness}%)`; // Keep the hue (200) and saturation (50%) constant, but change lightness
+});
+
+const gradientEnd = computed(() => {
+  const stepSize = Number(currentUserStep.value);
+  // The end of the gradient can be slightly darker or lighter
+  const lightness = 40 - (stepSize / 10) * 40; // 70% to 30% lightness range
+  return `hsl(200, 30%, ${lightness}%)`; // Same hue and saturation, but darker lightness
+});
+
+// Watch for changes in gradientStart and gradientEnd and update CSS variables
+watch([gradientStart, gradientEnd], ([newStart, newEnd]) => {
+  console.log("New Gradient Start:", newStart); // Debugging log
+  console.log("New Gradient End:", newEnd); // Debugging log
+  document.documentElement.style.setProperty("--gradient-start", newStart);
+  document.documentElement.style.setProperty("--gradient-end", newEnd);
+});
+
+// Update the session before mounting the app in case the user is already logged in
 onBeforeMount(async () => {
   try {
     await userStore.updateSession();
