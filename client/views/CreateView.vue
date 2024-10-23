@@ -2,8 +2,21 @@
 import CreatePostForm from "../components/Post/CreatePostForm.vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
+import { fetchy } from "@/utils/fetchy";
 
 const { isLoggedIn } = storeToRefs(useUserStore());
+
+async function getPosts(author?: string) {
+  let query: Record<string, string> = author !== undefined ? { author } : {};
+  let postResults;
+  try {
+    postResults = await fetchy("/api/posts", "GET", { query });
+  } catch (_) {
+    return;
+  }
+  searchAuthor.value = author ? author : "";
+  posts.value = postResults;
+}
 </script>
 
 <template>
