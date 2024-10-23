@@ -7,6 +7,7 @@ export const useUserStore = defineStore(
   "user",
   () => {
     const currentUsername = ref("");
+    const currentUserStep = ref(""); // New state to track user's step size
 
     const isLoggedIn = computed(() => currentUsername.value !== "");
 
@@ -28,8 +29,9 @@ export const useUserStore = defineStore(
 
     const updateSession = async () => {
       try {
-        const { username } = await fetchy("/api/session", "GET", { alert: false });
+        const { username, stepSize } = await fetchy("/api/session", "GET", { alert: false });
         currentUsername.value = username;
+        currentUserStep.value = stepSize || "";
       } catch {
         currentUsername.value = "";
       }
@@ -59,6 +61,7 @@ export const useUserStore = defineStore(
 
     return {
       currentUsername,
+      currentUserStep,
       isLoggedIn,
       createUser,
       loginUser,

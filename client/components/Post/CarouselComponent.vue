@@ -1,29 +1,3 @@
-<template>
-  <div class="carousel-container">
-    <div class="relative carousel-wrapper">
-      <!-- Loop through visible posts and placeholders -->
-      <article v-for="(item, index) in feedItems" :key="index" class="carousel-card" :style="calculateStyle(index - centerIndex)">
-        <div v-if="index === 0">
-          <!-- Show the actual post on the first card -->
-          <PostComponent :post="item" @refreshPosts="refreshPosts" @editPost="editPost" />
-        </div>
-        <div v-else>
-          <!-- Placeholder for the rest of the carousel -->
-          <div class="placeholder-card">
-            <p>More content coming soon...</p>
-          </div>
-        </div>
-      </article>
-    </div>
-
-    <!-- Navigation buttons -->
-    <div class="carousel-nav">
-      <button @click="navigate('left')" class="carousel-button">←</button>
-      <button @click="navigate('right')" class="carousel-button">→</button>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import PostComponent from "@/components/Post/PostComponent.vue";
@@ -43,13 +17,17 @@ const centerIndex = ref(0);
 const calculateStyle = (relativeIndex: number) => {
   const absIndex = Math.abs(relativeIndex);
   const scale = 1 - (absIndex * props.offset) / 1000;
-  const translateX = relativeIndex * (props.offset / 1.5) * Math.pow(1.2, absIndex);
+  const translateX = relativeIndex * 1.5 * (props.offset / 1.1) * Math.pow(1.5, absIndex);
   const zIndex = 5 - absIndex;
 
+  // Apply more blur the further the card is from the center
+  const blurAmount = absIndex > 0 ? `blur(${absIndex * 25}px)` : "none";
+
   return {
-    transform: `translateX(-50%) scale(${scale}) translate(${translateX}px)`, // Add translateX(-50%) to center the card
+    transform: `translateX(-50%) scale(${scale}) translate(${translateX}px)`, // Center and translate
     zIndex,
     opacity: absIndex > 2 ? 0 : 1,
+    filter: blurAmount, // Apply blur effect
     transition: "all 0.3s ease-in-out",
   };
 };
@@ -73,6 +51,30 @@ const refreshPosts = () => emit("refreshPosts");
 const editPost = (id: string) => emit("editPost", id);
 </script>
 
+<template>
+  <div class="carousel-container">
+    <div class="relative carousel-wrapper">
+      <!-- Loop through visible posts and placeholders -->
+      <article v-for="(item, index) in feedItems" :key="index" class="carousel-card" :style="calculateStyle(index - centerIndex)">
+        <div v-if="index === 0">
+          <!-- Show the actual post on the first card -->
+          <PostComponent :post="item" @refreshPosts="refreshPosts" @editPost="editPost" />
+        </div>
+        <div v-else>
+          <!-- Placeholder for the rest of the carousel -->
+          <div class="placeholder-card">
+            <p>More content coming soon...</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Navigation buttons positioned on the left and right of the center card -->
+      <button @click="navigate('left')" class="carousel-button left-button">←</button>
+      <button @click="navigate('right')" class="carousel-button right-button">→</button>
+    </div>
+  </div>
+</template>
+
 <style scoped>
 .carousel-container {
   display: flex;
@@ -80,13 +82,13 @@ const editPost = (id: string) => emit("editPost", id);
   gap: 1em;
   width: 100%;
   margin: 0 auto;
+  padding-bottom: 2em;
 }
 
 .carousel-wrapper {
   position: relative;
   width: 100%;
   height: 450px;
-  overflow: hidden;
 }
 
 .carousel-card {
@@ -97,7 +99,7 @@ const editPost = (id: string) => emit("editPost", id);
   background-color: #eeeeee;
   border-radius: 30px;
   width: 300px;
-  height: 400px;
+  height: 440px;
   padding: 1em;
   transform: translateX(-50%); /* Adjust position to center card by moving half of its width */
 }
@@ -114,12 +116,6 @@ const editPost = (id: string) => emit("editPost", id);
   border-radius: 30px;
 }
 
-.carousel-nav {
-  display: flex;
-  justify-content: center;
-  gap: 1em;
-}
-
 .carousel-button {
   background-color: #ddd;
   border: none;
@@ -127,5 +123,21 @@ const editPost = (id: string) => emit("editPost", id);
   border-radius: 50%;
   cursor: pointer;
   font-size: 1.5em;
+  z-index: 10; /* Ensure buttons are above the cards */
+  position: absolute;
+  top: 50%; /* Vertically center the buttons */
+  transform: translateY(-50%); /* Correct centering */
+}
+
+.left-button {
+  left: 20%; /* Position on the left side of the center card */
+}
+
+.right-button {
+  right: 20%; /* Position on the right side of the center card */
+}
+
+.carousel-nav {
+  display: none; /* We no longer need this section since the buttons are repositioned */
 }
 </style>
