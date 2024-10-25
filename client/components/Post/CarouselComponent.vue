@@ -21,7 +21,7 @@ const calculateStyle = (relativeIndex: number) => {
   const zIndex = 5 - absIndex;
 
   // Apply more blur the further the card is from the center
-  const blurAmount = absIndex > 0 ? `blur(${absIndex * 25}px)` : "none";
+  const blurAmount = absIndex > 0 ? `blur(${absIndex * 10}px)` : "none";
 
   return {
     transform: `translateX(-50%) scale(${scale}) translate(${translateX}px)`, // Center and translate

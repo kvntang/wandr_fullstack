@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeMount } from "vue";
+import CommentComponent from "@/components/Comment/CommentComponent.vue";
 import { useUserStore } from "@/stores/user";
 import { formatDate } from "@/utils/formatDate";
 import { storeToRefs } from "pinia";
@@ -8,6 +9,27 @@ import { fetchy } from "../../utils/fetchy";
 const props = defineProps(["post"]);
 const emit = defineEmits(["editPost", "refreshPosts"]);
 const { currentUsername } = storeToRefs(useUserStore());
+const loaded = ref(false);
+
+const comments = ref<Array<Record<string, string>>>([]);
+
+async function getComments(postId?: string) {
+  let query: Record<string, string> = postId !== undefined ? { postId } : {};
+  let commentResults;
+  try {
+    commentResults = await fetchy("api/comments", "GET", { query });
+  } catch (_) {
+    return;
+  }
+  comments.value = commentResults;
+}
+
+onBeforeMount(async () => {
+  if (props.post._id) {
+    await getComments(props.post._id); // Pass postId
+  }
+  loaded.value = true;
+});
 
 const deletePost = async () => {
   try {
@@ -51,7 +73,17 @@ onMounted(async () => {
 </script>
 
 <template>
-  <p class="author">{{ props.post.author }}</p>
+  <!-- Author and Edit/Delete buttons in the same row -->
+  <div class="post-header">
+    <p class="author">{{ props.post.author }}</p>
+
+    <menu v-if="props.post.author == currentUsername" class="action-buttons">
+      <li><button class="btn-small pure-button" @click="emit('editPost', props.post._id)">Edit</button></li>
+      <li><button class="button-error btn-small pure-button" @click="deletePost">Delete</button></li>
+    </menu>
+  </div>
+
+  <!-- Post content -->
   <p>{{ props.post.content }}</p>
 
   <!-- Lazy load the image -->
@@ -60,27 +92,41 @@ onMounted(async () => {
   </div>
   <p v-else>No photo available.</p>
 
+  <!-- Timestamp under the image -->
+  <article class="timestamp">
+    <p v-if="props.post.dateCreated !== props.post.dateUpdated">Edited on: {{ formatDate(props.post.dateUpdated) }}</p>
+    <p v-else>Created on: {{ formatDate(props.post.dateCreated) }}</p>
+  </article>
+
   <!-- Commenting -->
   <div>
-    <p>Display comments here</p>
-    <div class="commentbox">Add a comment here</div>
-  </div>
+    <section class="comments" v-if="loaded && comments.length !== 0">
+      <div v-for="comment in comments" :key="comment._id">
+        <CommentComponent :comment="comment" />
+      </div>
+    </section>
 
-  <!-- Edit and TimeStamp -->
-  <div class="base">
-    <menu v-if="props.post.author == currentUsername">
-      <li><button class="btn-small pure-button" @click="emit('editPost', props.post._id)">Edit</button></li>
-      <li><button class="button-error btn-small pure-button" @click="deletePost">Delete</button></li>
-    </menu>
-
-    <article class="timestamp">
-      <p v-if="props.post.dateCreated !== props.post.dateUpdated">Edited on: {{ formatDate(props.post.dateUpdated) }}</p>
-      <p v-else>Created on: {{ formatDate(props.post.dateCreated) }}</p>
-    </article>
+    <p v-else-if="loaded">No comment yet</p>
+    <p v-else>Loading...</p>
   </div>
 </template>
 
 <style scoped>
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1em;
+}
+
+.action-buttons {
+  list-style-type: none;
+  display: flex;
+  gap: 0.5em; /* Space between Edit and Delete buttons */
+  padding: 0;
+  margin: 0;
+}
+
 .responsive-image {
   display: block;
   margin: 0 auto;
