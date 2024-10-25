@@ -1,12 +1,10 @@
-<script setup lang="ts">
-import SearchPostForm from "@/components/post/SearchPostForm.vue";
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <main>
     <h1>SEARCH</h1>
     <section>
-      <SearchPostForm @getPostsByAuthor="getPosts" />
+      <p>searching....</p>
     </section>
   </main>
 </template>

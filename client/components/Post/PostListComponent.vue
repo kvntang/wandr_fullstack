@@ -44,15 +44,11 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <div class="row">
-    <!-- <h2 v-if="!searchAuthor">Feed:</h2>
-    <h2 v-else>Posts by {{ searchAuthor }}:</h2> -->
-    <!-- <SearchPostForm @getPostsByAuthor="getPosts" /> -->
-  </div>
+  <div class="row"></div>
 
   <!-- Load a carousel for each post, first card is the post, rest are placeholders -->
   <section class="posts" v-if="loaded && posts.length !== 0">
-    <div v-for="post in posts" :key="post._id">
+    <div v-for="post in posts" :key="post._id" class="carousel-wrapper">
       <!-- Pass the computed offsetValue to control the scaling and translation -->
       <CarouselComponent :post="post" :totalItems="5" :offset="offsetValue" @refreshPosts="getPosts" @editPost="updateEditing" />
     </div>
@@ -64,20 +60,27 @@ onBeforeMount(async () => {
 
 <style scoped>
 section {
-  display: flex;
-  flex-direction: column;
-  gap: 1em;
+  display: block; /* Allow section to handle stacking */
 }
+
+.carousel-wrapper {
+  position: relative;
+  margin-bottom: 2em; /* Space between each carousel */
+  width: 100%;
+}
+
 section,
 p,
 .row {
   margin: 0 auto;
   max-width: 60em;
 }
+
 .posts {
   padding: 1em;
   width: 100%;
 }
+
 .row {
   display: flex;
   justify-content: space-between;
