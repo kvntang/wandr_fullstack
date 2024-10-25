@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeMount } from "vue";
 import CommentComponent from "@/components/Comment/CommentComponent.vue";
+import CommentPostForm from "@/components/Comment/CommentPostForm.vue";
 import { useUserStore } from "@/stores/user";
 import { formatDate } from "@/utils/formatDate";
 import { storeToRefs } from "pinia";
@@ -100,14 +101,19 @@ onMounted(async () => {
 
   <!-- Commenting -->
   <div>
+    <!-- Display comments if they exist -->
     <section class="comments" v-if="loaded && comments.length !== 0">
       <div v-for="comment in comments" :key="comment._id">
         <CommentComponent :comment="comment" />
       </div>
     </section>
 
-    <p v-else-if="loaded">No comment yet</p>
+    <!-- Display "No comments yet" message if loaded and no comments exist -->
+    <p v-else-if="loaded">No comments yet</p>
     <p v-else>Loading...</p>
+
+    <!-- Always show the CommentPostForm, regardless of comments -->
+    <CommentPostForm :postId="props.post._id" @refreshComments="getComments(props.post._id)" />
   </div>
 </template>
 

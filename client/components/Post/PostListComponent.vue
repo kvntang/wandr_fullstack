@@ -67,6 +67,7 @@ section {
   position: relative;
   margin-bottom: 2em; /* Space between each carousel */
   width: 100%;
+  height: 800px;
 }
 
 section,
