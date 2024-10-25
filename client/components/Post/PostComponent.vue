@@ -19,6 +19,7 @@ async function getComments(postId?: string) {
   let commentResults;
   try {
     commentResults = await fetchy("api/comments", "GET", { query });
+    console.log("refreshing comments");
   } catch (_) {
     return;
   }
@@ -104,7 +105,7 @@ onMounted(async () => {
     <!-- Display comments if they exist -->
     <section class="comments" v-if="loaded && comments.length !== 0">
       <div v-for="comment in comments" :key="comment._id">
-        <CommentComponent :comment="comment" />
+        <CommentComponent :comment="comment" @refreshComments="getComments(props.post._id)" />
       </div>
     </section>
 
