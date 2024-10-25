@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
+import { ref, computed } from "vue";
 import PostComponent from "@/components/Post/PostComponent.vue";
 
 // Props
@@ -12,21 +12,9 @@ const emit = defineEmits(["refreshPosts", "editPost"]);
 
 // Local state
 const centerIndex = ref(0);
-const carouselHeight = ref(0);
-
-// Function to calculate the height of the tallest card
-const updateCarouselHeight = async () => {
-  await nextTick(); // Wait for the DOM to update
-  const cards = document.querySelectorAll(".carousel-card");
-  const tallestHeight = Array.from(cards).reduce((maxHeight, card) => {
-    const cardHeight = card.scrollHeight; // Get the full height of each card
-    return Math.max(maxHeight, cardHeight);
-  }, 0);
-  carouselHeight.value = tallestHeight; // Set the tallest card's height
-};
 
 // Calculate the style for each card in the carousel
-const calculateStyle = (relativeIndex) => {
+const calculateStyle = (relativeIndex: number) => {
   const absIndex = Math.abs(relativeIndex);
   const scale = 1 - (absIndex * props.offset) / 1000;
   const translateX = relativeIndex * 1.5 * (props.offset / 1.1) * Math.pow(1.5, absIndex);
@@ -50,45 +38,24 @@ const feedItems = computed(() => {
 });
 
 // Navigate left or right in the carousel
-const navigate = (direction) => {
+const navigate = (direction: "left" | "right") => {
   if (direction === "left" && centerIndex.value > 0) {
     centerIndex.value--;
   } else if (direction === "right" && centerIndex.value < props.totalItems - 1) {
     centerIndex.value++;
   }
-  updateCarouselHeight(); // Update the height on navigation
 };
 
 // Emit events to refresh or edit posts
 const refreshPosts = () => emit("refreshPosts");
-const editPost = (id) => emit("editPost", id);
-
-onMounted(() => {
-  const observer = new MutationObserver(() => {
-    updateCarouselHeight(); // Trigger height recalculation when DOM changes
-  });
-
-  // Observe changes in the carousel-wrapper or its children
-  const carouselWrapper = document.querySelector(".carousel-wrapper");
-  if (carouselWrapper) {
-    observer.observe(carouselWrapper, { childList: true, subtree: true, attributes: true });
-  }
-
-  updateCarouselHeight(); // Initial height calculation
-});
-
-onUnmounted(() => {
-  if (observer) {
-    observer.disconnect(); // Clean up observer when the component is destroyed
-  }
-});
+const editPost = (id: string) => emit("editPost", id);
 </script>
 
 <template>
   <div class="carousel-container">
-    <div class="relative carousel-wrapper" :style="{ height: `${carouselHeight}px` }">
+    <div class="relative carousel-wrapper">
       <!-- Loop through visible posts and placeholders -->
-      <article v-for="(item, index) in feedItems" :key="index" class="carousel-card" ref="carouselCardRefs" @mounted="updateCarouselHeightOnCardLoad" :style="calculateStyle(index - centerIndex)">
+      <article v-for="(item, index) in feedItems" :key="index" class="carousel-card" :style="calculateStyle(index - centerIndex)">
         <div v-if="index === 0">
           <!-- Show the actual post on the first card -->
           <PostComponent :post="item" @refreshPosts="refreshPosts" @editPost="editPost" />
@@ -115,13 +82,13 @@ onUnmounted(() => {
   gap: 1em;
   width: 100%;
   margin: 0 auto;
-  height: auto;
   padding-bottom: 2em;
 }
 
 .carousel-wrapper {
   position: relative;
   width: 100%;
+  min-height: 450px; /* Set a minimum height for the carousel */
 }
 
 .carousel-card {
@@ -132,6 +99,7 @@ onUnmounted(() => {
   background-color: #eeeeee;
   border-radius: 30px;
   width: 300px;
+  min-height: 440px; /* Ensure the card has a minimum height, but can grow */
   padding: 1em;
   transform: translateX(-50%); /* Adjust position to center card by moving half of its width */
   transition: height 0.3s ease; /* Smooth transition when height changes */
@@ -142,7 +110,7 @@ onUnmounted(() => {
   justify-content: center;
   align-items: center;
   width: 100%;
-  min-height: 300px;
+  min-height: 300px; /* Set a minimum height for placeholder */
   background-color: #d2d2d2;
   color: #888;
   font-size: 1.2em;
@@ -156,17 +124,17 @@ onUnmounted(() => {
   border-radius: 50%;
   cursor: pointer;
   font-size: 1.5em;
-  z-index: 10;
+  z-index: 10; /* Ensure buttons are above the cards */
   position: absolute;
   top: 50%; /* Vertically center the buttons */
-  transform: translateY(-50%);
+  transform: translateY(-50%); /* Correct centering */
 }
 
 .left-button {
-  left: 20%;
+  left: 20%; /* Position on the left side of the center card */
 }
 
 .right-button {
-  right: 20%;
+  right: 20%; /* Position on the right side of the center card */
 }
 </style>
