@@ -10,6 +10,8 @@ import { fetchy } from "../../utils/fetchy";
 const props = defineProps(["post"]);
 const emit = defineEmits(["editPost", "refreshPosts"]);
 const { currentUsername } = storeToRefs(useUserStore());
+const userStore = useUserStore();
+const { isLoggedIn } = storeToRefs(userStore);
 const loaded = ref(false);
 
 const comments = ref<Array<Record<string, string>>>([]);
@@ -113,8 +115,14 @@ onMounted(async () => {
     <p v-else-if="loaded">No comments yet</p>
     <p v-else>Loading...</p>
 
-    <!-- Always show the CommentPostForm, regardless of comments -->
-    <CommentPostForm :postId="props.post._id" @refreshComments="getComments(props.post._id)" />
+    <!-- Show CommentPostForm only if the user is logged in -->
+    <div v-if="isLoggedIn">
+      <CommentPostForm :postId="props.post._id" @refreshComments="getComments(props.post._id)" />
+    </div>
+    <div v-else>
+      <p>You need to be logged in to add a comment.</p>
+      <!-- Optional message when not logged in -->
+    </div>
   </div>
 </template>
 
